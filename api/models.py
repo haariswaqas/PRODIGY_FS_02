@@ -30,6 +30,7 @@ class Employee(models.Model):
     date_of_birth = models.DateField(null=True, blank = True)
     profile_pic = models.CharField(max_length = 10000, default='Profile Picture Set', null = True, blank = True)
     job_title = models.CharField(max_length=255, null=True, blank=True)
+    salary = models.PositiveIntegerField(default=0, null=True, blank=True)
     age = models.IntegerField(null=True, blank = True)
     bio = models.TextField(blank=True, null=True)
     email = models.EmailField(null=True, blank=True, default = 'employee@gmail.com')

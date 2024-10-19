@@ -110,6 +110,7 @@ const EmployeeList = () => {
                                     <th scope="col">Age</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Phone Number</th>
+                                    <th scope="col">Salary</th> {/* Added Salary Column */}
                                     {showActions && <th scope="col">Actions</th>} {/* Show actions column based on state */}
                                 </tr>
                             </thead>
@@ -126,6 +127,7 @@ const EmployeeList = () => {
                                         <td>{employee.age || 'N/A'}</td>
                                         <td>{employee.email}</td>
                                         <td>{employee.phone_number || 'N/A'}</td>
+                                        <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td> {/* Display Salary */}
                                         {showActions && ( // Render action buttons only if showActions is true
                                             <td>
                                                 <button
@@ -155,9 +157,10 @@ const EmployeeList = () => {
                             <th scope="col">#</th>
                             <th scope="col">Full Name</th>
                             <th scope="col">Age</th>
-                            <th scope="col">Job Title</th> {/* Added Job Title Column */}
+                            <th scope="col">Job Title</th>
                             <th scope="col">Email</th>
                             <th scope="col">Phone Number</th>
+                            <th scope="col">Salary</th> {/* Added Salary Column */}
                             {showActions && <th scope="col">Actions</th>} {/* Show actions column based on state */}
                         </tr>
                     </thead>
@@ -172,9 +175,10 @@ const EmployeeList = () => {
                                     </Link>
                                 </td>
                                 <td>{employee.age || 'N/A'}</td>
-                                <td>{employee.job_title || 'N/A'}</td> {/* Job Title displayed here */}
+                                <td>{employee.job_title || 'N/A'}</td>
                                 <td>{employee.email}</td>
                                 <td>{employee.phone_number || 'N/A'}</td>
+                                <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td> {/* Display Salary */}
                                 {showActions && ( // Render action buttons only if showActions is true
                                    <td>
                                    <button
@@ -190,7 +194,6 @@ const EmployeeList = () => {
                                        Delete
                                    </button>
                                </td>
-                               
                                 )}
                             </tr>
                         ))}

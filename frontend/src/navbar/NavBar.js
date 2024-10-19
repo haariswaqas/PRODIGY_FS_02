@@ -10,7 +10,7 @@ const NavBar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          EMPLOYEE MANAGEMENT SYSTEM
+         <strong>EMPLOYEE MANAGEMENT SYSTEM</strong>
         </Link>
         <button
           className="navbar-toggler"

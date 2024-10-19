@@ -10,11 +10,16 @@ const Register = () => {
   const [last_name, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // State to show success message
   const { userRegistration } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    userRegistration(email, username, first_name, last_name, password, password2);
+    const success = await userRegistration(email, username, first_name, last_name, password, password2);
+    
+    if (success) {
+      setSuccessMessage('Registration successful! You can now log in.');
+    }
   };
 
   return (
@@ -27,6 +32,24 @@ const Register = () => {
                 <div className="row justify-content-center">
                   <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                     <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+
+                    {/* Custom Success Message */}
+                    {successMessage && (
+                      <div
+                        style={{
+                          backgroundColor: '#d4edda',
+                          color: '#155724',
+                          padding: '15px',
+                          borderRadius: '5px',
+                          marginBottom: '20px',
+                          border: '1px solid #c3e6cb',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {successMessage}
+                      </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="mx-1 mx-md-4">
                       <div className="d-flex flex-row align-items-center mb-4">
                         <div className="form-outline flex-fill mb-0">
