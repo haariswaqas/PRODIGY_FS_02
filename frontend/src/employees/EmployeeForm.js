@@ -95,7 +95,7 @@ const EmployeeForm = () => {
                     phone_number: '',
                     salary: 0 // Reset salary field
                 });
-                id ? navigate(`/employees/${id}`) : navigate('/employees');
+                id ? navigate(`/employee/${id}`) : navigate('/employees');
             } else {
                 const data = await response.json();
                 alert(`Failed to ${id ? 'update' : 'add'} employee: ${data.detail}`);

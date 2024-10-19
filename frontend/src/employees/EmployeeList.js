@@ -6,8 +6,9 @@ const EmployeeList = () => {
     const { authTokens } = useContext(AuthContext);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showActions, setShowActions] = useState(false); // State to track action visibility
-    const [groupByJobTitle, setGroupByJobTitle] = useState(false); // Set initial state to false (ungrouped)
+    const [showActions, setShowActions] = useState(false);
+    const [groupByJobTitle, setGroupByJobTitle] = useState(false);
+    const [sortOrder, setSortOrder] = useState(null); // Add sortOrder state
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,7 +51,7 @@ const EmployeeList = () => {
 
                 if (response.ok) {
                     alert('Employee successfully deleted');
-                    setEmployees(employees.filter(employee => employee.id !== id)); // Update the list after deletion
+                    setEmployees(employees.filter(employee => employee.id !== id));
                 } else {
                     throw new Error('Failed to delete employee');
                 }
@@ -60,7 +61,6 @@ const EmployeeList = () => {
         }
     };
 
-    // Function to group employees by job title
     const groupByJobTitleFunc = (employees) => {
         return employees.reduce((acc, employee) => {
             const jobTitle = employee.job_title || 'Unspecified';
@@ -70,6 +70,17 @@ const EmployeeList = () => {
             acc[jobTitle].push(employee);
             return acc;
         }, {});
+    };
+
+    // Sorting employees by salary
+    const sortEmployeesBySalary = (order) => {
+        const sortedEmployees = [...employees].sort((a, b) => {
+            const salaryA = a.salary || 0;
+            const salaryB = b.salary || 0;
+            return order === 'asc' ? salaryA - salaryB : salaryB - salaryA;
+        });
+        setEmployees(sortedEmployees);
+        setSortOrder(order);
     };
 
     if (loading) {
@@ -85,20 +96,28 @@ const EmployeeList = () => {
             {/* Toggle Button for Grouping */}
             <button 
                 className="btn btn-info mb-3 me-2"
-                onClick={() => setGroupByJobTitle(!groupByJobTitle)} // Toggle grouping state
+                onClick={() => setGroupByJobTitle(!groupByJobTitle)}
             >
                 {groupByJobTitle ? 'View All Employees' : 'Group By Job Title'}
             </button>
 
             {/* Toggle Button for Actions Visibility */}
             <button 
-                className="btn btn-warning mb-3"
-                onClick={() => setShowActions(!showActions)} // Toggle actions visibility
+                className="btn btn-warning mb-3 me-2"
+                onClick={() => setShowActions(!showActions)}
             >
                 {showActions ? 'Done' : 'Manage Employees'}
             </button>
 
-            {groupByJobTitle ? ( // Render grouped by job title
+            {/* Sort by Salary Button */}
+            <button
+                className="btn btn-secondary mb-3"
+                onClick={() => sortEmployeesBySalary(sortOrder === 'asc' ? 'desc' : 'asc')}
+            >
+                {sortOrder === 'asc' ? 'Sort by Salary (High to Low)' : 'Sort by Salary (Low to High)'}
+            </button>
+
+            {groupByJobTitle ? (
                 Object.keys(groupedEmployees).map(jobTitle => (
                     <div key={jobTitle} className="mb-4">
                         <h3>{jobTitle}</h3>
@@ -110,8 +129,8 @@ const EmployeeList = () => {
                                     <th scope="col">Age</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Phone Number</th>
-                                    <th scope="col">Salary</th> {/* Added Salary Column */}
-                                    {showActions && <th scope="col">Actions</th>} {/* Show actions column based on state */}
+                                    <th scope="col">Salary</th>
+                                    {showActions && <th scope="col">Actions</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -119,7 +138,6 @@ const EmployeeList = () => {
                                     <tr key={employee.id}>
                                         <th scope="row">{index + 1}</th>
                                         <td>
-                                            {/* Link with CSS styling to remove underline */}
                                             <Link to={`/employee/${employee.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                                 {employee.first_name} {employee.last_name}
                                             </Link>
@@ -127,11 +145,11 @@ const EmployeeList = () => {
                                         <td>{employee.age || 'N/A'}</td>
                                         <td>{employee.email}</td>
                                         <td>{employee.phone_number || 'N/A'}</td>
-                                        <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td> {/* Display Salary */}
-                                        {showActions && ( // Render action buttons only if showActions is true
+                                        <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td>
+                                        {showActions && (
                                             <td>
                                                 <button
-                                                    className="btn btn-primary btn-sm mr-2"
+                                                    className="btn btn-primary btn-sm me-2"
                                                     onClick={() => navigate(`/edit-employee/${employee.id}`)}
                                                 >
                                                     Edit
@@ -150,7 +168,7 @@ const EmployeeList = () => {
                         </table>
                     </div>
                 ))
-            ) : ( // Render all employees at once
+            ) : (
                 <table className="table table-dark">
                     <thead className="thead-dark">
                         <tr>
@@ -160,8 +178,8 @@ const EmployeeList = () => {
                             <th scope="col">Job Title</th>
                             <th scope="col">Email</th>
                             <th scope="col">Phone Number</th>
-                            <th scope="col">Salary</th> {/* Added Salary Column */}
-                            {showActions && <th scope="col">Actions</th>} {/* Show actions column based on state */}
+                            <th scope="col">Salary</th>
+                            {showActions && <th scope="col">Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -169,7 +187,6 @@ const EmployeeList = () => {
                             <tr key={employee.id}>
                                 <th scope="row">{index + 1}</th>
                                 <td>
-                                    {/* Link with CSS styling to remove underline */}
                                     <Link to={`/employee/${employee.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                         {employee.first_name} {employee.last_name}
                                     </Link>
@@ -178,22 +195,22 @@ const EmployeeList = () => {
                                 <td>{employee.job_title || 'N/A'}</td>
                                 <td>{employee.email}</td>
                                 <td>{employee.phone_number || 'N/A'}</td>
-                                <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td> {/* Display Salary */}
-                                {showActions && ( // Render action buttons only if showActions is true
-                                   <td>
-                                   <button
-                                       className="btn btn-primary btn-sm me-2" // Added margin-end (right) for spacing
-                                       onClick={() => navigate(`/edit-employee/${employee.id}`)}
-                                   >
-                                       Edit
-                                   </button>
-                                   <button
-                                       className="btn btn-danger btn-sm" // No additional margin needed here
-                                       onClick={() => deleteEmployee(employee.id)}
-                                   >
-                                       Delete
-                                   </button>
-                               </td>
+                                <td>{employee.salary ? `$${employee.salary}` : 'N/A'}</td>
+                                {showActions && (
+                                    <td>
+                                        <button
+                                            className="btn btn-primary btn-sm me-2"
+                                            onClick={() => navigate(`/edit-employee/${employee.id}`)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() => deleteEmployee(employee.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 )}
                             </tr>
                         ))}
